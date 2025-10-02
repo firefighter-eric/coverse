@@ -1,41 +1,7 @@
-
-import gradio as gr
-import openai
-import random
-from loguru import logger
-import re
-import os
-from dotenv import load_dotenv
 from tqdm import tqdm
 
-load_dotenv()
+from coverse.utils.model_clients import ModelClient
 
-
-
-# client = openai.OpenAI(
-#     api_key="ollama",
-#     base_url="http://127.0.0.1:11434/v1",
-# )
-
-client = openai.OpenAI(
-    api_key=os.environ.get('ARK_API_KEY'),
-    base_url="https://ark.cn-beijing.volces.com/api/v3",
-)
-
-MODEL_NAME = "doubao-seed-1-6-250615"
-
-def chat_with_openai(messages):
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=messages,
-        temperature=0.7,
-        max_tokens=1024,
-    )
-    answer = response.choices[0].message.content
-    # postporocess
-    answer = re.sub('<think>.+</think>', '', answer, flags=re.MULTILINE)
-    answer = answer.strip()
-    return answer
 
 def chat_with_agent(messages, agent_name):
     # change role to agent_name
@@ -47,11 +13,12 @@ def chat_with_agent(messages, agent_name):
             continue
         else:
             msg['role'] = 'user'
-    answer = chat_with_openai(messages)
+    # chat
+    answer = client.chat(messages)
     return answer
 
 
-def multi_agent(system_prompt = '', first_message: str=''):
+def multi_agent(system_prompt='', first_message: str = ''):
     messages = [{'role': 'system', 'content': system_prompt}]
     messages.append({'role': 'agent_1', 'content': first_message})
     for i in tqdm(range(5)):
@@ -61,12 +28,20 @@ def multi_agent(system_prompt = '', first_message: str=''):
         messages.append({'role': 'agent_2', 'content': answer})
     return messages
 
+
 if __name__ == '__main__':
-    system_prompt = "你是一个有帮助的助手，每次回答不超过10字， /set nothink"
+    MODEL_NAME = 'qwen3:4b-instruct'
+    client = ModelClient(MODEL_NAME)
+    system_prompt = """
+你是一名心理学实验中的对话参与者，需要严格遵守以下规则：  
+1. 我们轮流造句，每次只说一句话。  
+2. 回答长度必须在10到20字之间。  
+3. 不允许使用任何标点符号。  
+4. 每句话都必须有故事性和口语化风格，像一个人在自然讲故事。  
+5. 只能输出回答，不允许有额外解释或格式。  
+    """
+    first_message = "小猫在阳光下睡觉"
 
-    m = multi_agent(system_prompt, first_message='你好')
-    
-
-
-
-
+    messages = multi_agent(system_prompt=system_prompt, first_message=first_message)
+    for m in messages:
+        print(m['content'])
