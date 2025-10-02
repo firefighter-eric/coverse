@@ -40,6 +40,7 @@ class ModelClient:
             max_tokens=max_tokens,
         )
         answer = response.choices[0].message.content
+        # remove think
         answer = re.sub('<think>.+</think>', '', answer, flags=re.MULTILINE)
         answer = answer.strip()
         return answer
