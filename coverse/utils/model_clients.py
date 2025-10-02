@@ -18,21 +18,28 @@ class ModelClient:
             raise ValueError(f"Model {model_name} not supported")
         self.client = client
 
-    def load_ollama_client(self):
+    @staticmethod
+    def load_ollama_client():
         client = openai.OpenAI(
             api_key="ollama",
             base_url="http://127.0.0.1:11434/v1",
         )
         return client
 
-    def load_ark_client(self):
+    @staticmethod
+    def load_ark_client():
         client = openai.OpenAI(
             api_key=os.environ["ARK_API_KEY"],
             base_url="https://ark.cn-beijing.volces.com/api/v3",
         )
         return client
 
-    def chat(self, messages, temperature=0.7, max_tokens=1024) -> str:
+    def chat(
+            self,
+            messages,
+            temperature: float = 0.7,
+            max_tokens: int = 1024
+    ) -> str:
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=messages,
