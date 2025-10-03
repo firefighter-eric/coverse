@@ -8,7 +8,7 @@ from datetime import datetime
 import gradio as gr
 from loguru import logger
 
-from coverse.utils.model_clients import ModelClient
+from coverse.agents.converse_agent import ConverseAgent
 
 
 def chat_with_openai_mock(messages):
@@ -24,8 +24,7 @@ def respond(message, chat_history: list[dict]):
     chat_history.append({'role': 'user', 'content': message})
     yield "", chat_history
 
-    messages = [{'role': 'system', 'content': system_prompt}] + chat_history
-    answer = model_client.chat(messages)
+    answer = agent.run(messages=chat_history)
     chat_history.append({'role': 'assistant', 'content': answer})
     elapsed = time.time() - start_time
     latency = args.min_latency + random.random() * 3
@@ -70,15 +69,8 @@ if __name__ == "__main__":
     parser.add_argument('--model', type=str, default='qwen3:30b')
     parser.add_argument('--min-latency', type=float, default=5.0)
     args = parser.parse_args()
-    model_client = ModelClient(args.model)
-    system_prompt = """
-    你是一名心理学实验中的对话参与者，需要严格遵守以下规则：  
-    1. 我们轮流造句，每次只说一句话。  
-    2. 回答长度必须在10到20字之间。  
-    3. 不允许使用任何标点符号和换行。  
-    4. 每句话都必须有故事性和口语化风格，像一个人在自然讲故事。  
-    5. 只能输出回答，不允许有额外解释或格式。  
-    """
+    agent = ConverseAgent(args.model)
+
     # warmup
     logger.info(respond('hi', []))
     demo.launch()
