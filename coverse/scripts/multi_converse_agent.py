@@ -7,14 +7,18 @@ from tqdm import tqdm
 from coverse.agents.converse_agent import ConverseAgent
 from coverse.agents.multi_agent import MultiAgentChat
 
+# %% config
 story_prompts_path = 'data/coverse_pe/story_prompt.txt'
+
 # MODEL_NAME = 'qwen3:4b-instruct'
-MODEL_NAME = 'qwen3:30b'
-tag = 'temp2'
+# MODEL_NAME = 'qwen3:30b'
+# MODEL_NAME = 'doubao-seed-1-6-250615'
+MODEL_NAME = 'deepseek-v3-1-terminus'
+tag = 'temp0.7'
 
 # %%
-agent_1 = ConverseAgent(agent_name='agent_1', model_name=MODEL_NAME, temperature=2)
-agent_2 = ConverseAgent(agent_name='agent_2', model_name=MODEL_NAME, temperature=2)
+agent_1 = ConverseAgent(agent_name='agent_1', model_name=MODEL_NAME, temperature=0.7)
+agent_2 = ConverseAgent(agent_name='agent_2', model_name=MODEL_NAME, temperature=0.7)
 client = MultiAgentChat(agents=[agent_1, agent_2])
 
 story_prompts = open(story_prompts_path, 'r').readlines()

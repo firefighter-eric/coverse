@@ -2,6 +2,7 @@ import os
 
 import dotenv
 import openai
+from loguru import logger
 
 dotenv.load_dotenv()
 
@@ -11,7 +12,9 @@ class ModelClient:
         self.model_name = model_name
         if model_name.startswith('qwen'):
             client = self.load_ollama_client()
-        elif model_name in {'doubao-seed-1-6-250615'}:
+        elif model_name.startswith('doubao'):
+            client = self.load_ark_client()
+        elif model_name.startswith('deepseek'):
             client = self.load_ark_client()
         else:
             raise ValueError(f"Model {model_name} not supported")
@@ -49,3 +52,24 @@ class ModelClient:
         )
         answer = response.choices[0].message.content
         return answer
+
+
+def test_doubao():
+    model_name = 'doubao-seed-1-6-250615'
+    client = ModelClient(model_name=model_name)
+    messages = [{"role": "user", "content": "who are you?"}]
+    answer = client.generate(messages)
+    logger.info(f'{model_name=}\nanswer\n{answer}\n' + '-' * 20)
+
+
+def test_deepseek():
+    model_name = 'deepseek-v3-1-terminus'
+    client = ModelClient(model_name=model_name)
+    messages = [{"role": "user", "content": "who are you?"}]
+    answer = client.generate(messages)
+    logger.info(f'{model_name=}\nanswer\n{answer}\n' + '-' * 20)
+
+
+if __name__ == '__main__':
+    test_doubao()
+    test_deepseek()

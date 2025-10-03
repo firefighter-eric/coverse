@@ -66,7 +66,7 @@ with gr.Blocks() as demo:
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('--model', type=str, default='qwen3:30b')
+    parser.add_argument('--model', type=str, default='deepseek-v3-1-terminus')
     parser.add_argument('--min-latency', type=float, default=5.0)
     args = parser.parse_args()
     agent = ConverseAgent(args.model)
