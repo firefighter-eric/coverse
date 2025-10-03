@@ -37,12 +37,14 @@ class ModelClient:
             self,
             messages,
             temperature: float = 0.7,
+            top_p: float = 0.9,
             max_tokens: int = 1024
     ) -> str:
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=messages,
             temperature=temperature,
+            top_p=top_p,
             max_tokens=max_tokens,
         )
         answer = response.choices[0].message.content

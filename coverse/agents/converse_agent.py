@@ -9,10 +9,16 @@ class ConverseAgent:
             agent_name='agent',
             model_name='qwen3:4b-instruct',
             system_prompt=None,
+            temperature=0.7,
+            top_p=0.9,
+            max_tokens=1024,
     ):
         self.agent_name = agent_name
         self.model_name = model_name
         self.system_prompt = system_prompt
+        self.temperature = temperature
+        self.top_p = top_p
+        self.max_tokens = max_tokens
 
         self.model_client = ModelClient(model_name)
         if self.system_prompt is None:
@@ -21,7 +27,12 @@ class ConverseAgent:
     def run(self, messages):
         if messages[0]['role'] != 'system':
             messages = [{'role': 'system', 'content': self.system_prompt}] + messages
-        answer = self.model_client.generate(messages)
+        answer = self.model_client.generate(
+            messages=messages,
+            temperature=self.temperature,
+            top_p=self.top_p,
+            max_tokens=self.max_tokens,
+        )
         answer = self.postprocess(answer)
         return answer
 

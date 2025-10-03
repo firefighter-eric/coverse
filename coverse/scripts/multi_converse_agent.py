@@ -10,10 +10,11 @@ from coverse.agents.multi_agent import MultiAgentChat
 story_prompts_path = 'data/coverse_pe/story_prompt.txt'
 # MODEL_NAME = 'qwen3:4b-instruct'
 MODEL_NAME = 'qwen3:30b'
+tag = 'temp2'
 
 # %%
-agent_1 = ConverseAgent(agent_name='agent_1', model_name=MODEL_NAME)
-agent_2 = ConverseAgent(agent_name='agent_2', model_name=MODEL_NAME)
+agent_1 = ConverseAgent(agent_name='agent_1', model_name=MODEL_NAME, temperature=2)
+agent_2 = ConverseAgent(agent_name='agent_2', model_name=MODEL_NAME, temperature=2)
 client = MultiAgentChat(agents=[agent_1, agent_2])
 
 story_prompts = open(story_prompts_path, 'r').readlines()
@@ -34,5 +35,5 @@ with ThreadPoolExecutor(max_workers=10) as executor:
 
 df = pd.DataFrame(outputs)
 timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
-output_path = f'data/coverse_pe/{MODEL_NAME}-{timestamp}.csv'.replace(':', '-')
+output_path = f'data/coverse_pe/{MODEL_NAME}-{timestamp}-{tag}.csv'.replace(':', '-')
 df.to_csv(output_path, index=False)
