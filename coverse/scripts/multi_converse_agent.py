@@ -1,3 +1,4 @@
+import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
@@ -40,4 +41,5 @@ with ThreadPoolExecutor(max_workers=10) as executor:
 df = pd.DataFrame(outputs)
 timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
 output_path = f'data/coverse_pe/{MODEL_NAME}-{timestamp}-{tag}.csv'.replace(':', '-')
+os.makedirs(os.path.dirname(output_path), exist_ok=True)
 df.to_csv(output_path, index=False)

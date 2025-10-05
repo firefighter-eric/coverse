@@ -27,7 +27,7 @@ def respond(message, chat_history: list[dict]):
     answer = agent.run(messages=chat_history)
     chat_history.append({'role': 'assistant', 'content': answer})
     elapsed = time.time() - start_time
-    latency = args.min_latency + random.random() * 3
+    latency = args.min_latency + random.random() * (args.max_latency - args.min_latency)
     if elapsed < latency:
         time.sleep(latency - elapsed)
     logger.info(f'{chat_history=}')
@@ -55,7 +55,7 @@ def save_chat(user_id, chat_history):
 with gr.Blocks() as demo:
     gr.Markdown(f"# Coverse")
     user_id = gr.Textbox(label="User ID", value="unknown")
-    chatbot = gr.Chatbot(type="messages", value=[], height=600)
+    chatbot = gr.Chatbot(type="messages", value=[], height=400)
     input_text = gr.Textbox(label='Input', max_lines=1)
     save_button = gr.Button(value="Save Chat")
     save_state = gr.Textbox(label="Save State", max_lines=1)
@@ -68,8 +68,9 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('--model', type=str, default='deepseek-v3-1-terminus')
     parser.add_argument('--min-latency', type=float, default=5.0)
+    parser.add_argument('--max-latency', type=float, default=8.0)
     args = parser.parse_args()
-    agent = ConverseAgent(args.model)
+    agent = ConverseAgent(model_name=args.model)
 
     # warmup
     logger.info(respond('hi', []))
