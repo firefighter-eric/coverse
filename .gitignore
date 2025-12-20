@@ -2,6 +2,7 @@
 /data
 /.venv
 /.idea
+/data
 
 *.egg-info
 .env
