@@ -5,13 +5,13 @@ from coverse.utils.model_clients import ModelClient
 
 class ConverseAgent:
     def __init__(
-            self,
-            agent_name='agent',
-            model_name='qwen3:4b-instruct',
-            system_prompt=None,
-            temperature=0.7,
-            top_p=0.9,
-            max_tokens=1024,
+        self,
+        agent_name="agent",
+        model_name="qwen3:4b-instruct",
+        system_prompt=None,
+        temperature=0.7,
+        top_p=0.9,
+        max_tokens=1024,
     ):
         self.agent_name = agent_name
         self.model_name = model_name
@@ -25,8 +25,8 @@ class ConverseAgent:
             self.system_prompt = self.default_system_prompt()
 
     def run(self, messages):
-        if messages[0]['role'] != 'system':
-            messages = [{'role': 'system', 'content': self.system_prompt}] + messages
+        if messages[0]["role"] != "system":
+            messages = [{"role": "system", "content": self.system_prompt}] + messages
         answer = self.model_client.generate(
             messages=messages,
             temperature=self.temperature,
@@ -55,16 +55,16 @@ class ConverseAgent:
 
     def postprocess(self, answer):
         # remove think
-        answer = re.sub('<think>.+</think>', '', answer, flags=re.MULTILINE)
+        answer = re.sub("<think>.+</think>", "", answer, flags=re.MULTILINE)
         answer = answer.strip()
         return answer
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     agent = ConverseAgent()
     messages = [
-        {'role': 'user', 'content': '小猫在阳光下睡觉'},
+        {"role": "user", "content": "小猫在阳光下睡觉"},
     ]
 
     answer = agent.run(messages)
-    print(f'Agent: {answer}')
+    print(f"Agent: {answer}")
