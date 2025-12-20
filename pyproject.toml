@@ -8,6 +8,9 @@ requires-python = "==3.11.*"
 license = "MIT"
 
 dependencies = [
+    "torch==2.6.0",
+    "transformers",
+    "accelerate",
     "numpy>=1.27",
     "pandas>=2.2",
     "gradio",
@@ -23,3 +26,13 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 include = ["coverse*"]
 exclude = ["config*"]
+
+[[tool.uv.index]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
+
+[tool.ruff]
+line-length = 100
+
+

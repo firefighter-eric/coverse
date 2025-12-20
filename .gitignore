@@ -1,6 +1,7 @@
 /config
 /.venv
 /.idea
+/data
 
 *.egg-info
 .env
