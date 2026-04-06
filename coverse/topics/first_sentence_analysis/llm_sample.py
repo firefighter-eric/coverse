@@ -27,7 +27,6 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import json
-import random
 import sys
 import threading
 from pathlib import Path
@@ -74,7 +73,6 @@ def run_llm_sample(
 
     resolved_prompts_file = resolve_prompts_file(prompts_file)
     prompt_specs = load_prompt_specs(prompts_file)
-    random.Random(seed).shuffle(prompt_specs)
     system_prompt = load_system_prompt(system_prompt_file)
 
     output_file = Path(output_path)

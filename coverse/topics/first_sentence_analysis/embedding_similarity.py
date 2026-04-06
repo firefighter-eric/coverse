@@ -34,6 +34,7 @@ if __package__ in {None, ""}:
 
 import numpy as np
 import torch
+from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
 
 from coverse.config import DEFAULT_EMBEDDING_MODEL_PATH
@@ -62,7 +63,13 @@ class SentenceEmbeddingModel:
     def encode(self, texts: list[str], batch_size: int = 32) -> np.ndarray:
         self._ensure_loaded()
         chunks = []
-        for start in range(0, len(texts), batch_size):
+        total_batches = (len(texts) + batch_size - 1) // batch_size
+        for start in tqdm(
+            range(0, len(texts), batch_size),
+            total=total_batches,
+            desc="Encoding texts",
+            unit="batch",
+        ):
             batch = texts[start : start + batch_size]
             encoded = self._tokenizer(
                 batch,
@@ -128,7 +135,9 @@ def run_embedding_similarity(
     embeddings = embedding_model.encode(texts)
 
     rows: list[dict[str, Any]] = []
-    for index, record in enumerate(records):
+    for index, record in enumerate(
+        tqdm(records, total=len(records), desc="Computing similarities", unit="record")
+    ):
         prompt_vec = embeddings[index * 2]
         response_vec = embeddings[index * 2 + 1]
         similarity = cosine_similarity(prompt_vec, response_vec)

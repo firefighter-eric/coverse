@@ -110,6 +110,8 @@ class FirstSentenceAnalysisTests(unittest.TestCase):
             )
             self.assertEqual(metadata["args"]["concurrency"], 16)
             self.assertEqual(len(samples), 6)
+            self.assertEqual(samples[0]["prompt"], "我在路边等红绿灯")
+            self.assertEqual(samples[3]["prompt"], "今天我收到了一封电子邮件")
 
     def test_embedding_similarity_writes_outputs(self):
         records = [
