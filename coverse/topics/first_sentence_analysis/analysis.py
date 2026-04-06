@@ -122,8 +122,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="读取 embedding 相似度结果，按 prompt 聚合并输出分析排序。"
     )
-    parser.add_argument("--similarities-path", required=True)
-    parser.add_argument("--output-path", required=True)
+    parser.add_argument("--similarities-path", default="data/first_sentence_analysis/v0/embedding_similarities.json")
+    parser.add_argument("--output-path", default="data/first_sentence_analysis/v0/analysis.json")
     return parser
 
 
