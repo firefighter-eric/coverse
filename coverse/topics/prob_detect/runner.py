@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+import argparse
+import json
+import sys
 from pathlib import Path
+
+if __package__ in {None, ""}:
+    sys.path.append(str(Path(__file__).resolve().parents[3]))
 
 from coverse.core.io import ExperimentIO
 from coverse.core.types import ExperimentMetadata, utc_timestamp
@@ -66,3 +72,33 @@ def run_probability_experiment(
         "json_path": str(json_path),
         "csv_path": str(csv_path),
     }
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="运行 masked LM 概率分析实验。")
+    parser.add_argument("--model-path", required=True)
+    parser.add_argument("--target", required=True)
+    parser.add_argument("--output-dir", default="outputs")
+    parser.add_argument("--device-map", default="auto")
+    parser.add_argument("--text", action="append", default=[])
+    parser.add_argument("--text-file")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    result = run_probability_experiment(
+        model_path=args.model_path,
+        target=args.target,
+        output_dir=args.output_dir,
+        command="python coverse/topics/prob_detect/runner.py",
+        texts=args.text,
+        text_file=args.text_file,
+        device_map=args.device_map,
+    )
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

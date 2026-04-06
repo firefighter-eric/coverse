@@ -27,3 +27,8 @@ DEFAULT_LLM_API_KEY_ENV = env_with_fallback(
     "LLM_API_KEY",
 )
 DEFAULT_LLM_MODEL = env_with_fallback("LLM_MODEL", "VITE_LLM_MODEL", "deepseek-chat")
+DEFAULT_EMBEDDING_MODEL_PATH = env_with_fallback(
+    "EMBEDDING_MODEL_PATH",
+    None,
+    "data/models/Qwen/Qwen3-Embedding-0.6B",
+)

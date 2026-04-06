@@ -90,7 +90,7 @@ def create_app(
         run_dir = experiment_io.prepare_run_dir("chat_app", run_name)
         metadata = ExperimentMetadata(
             topic="chat_app",
-            command="coverse app serve",
+            command="python coverse/apps/gradio_app.py",
             args={"user_id": user_id},
             model={"provider": provider, "model": model},
             output_dir=str(run_dir),

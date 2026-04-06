@@ -12,7 +12,6 @@ coverse/
   core/      共享基础能力：agent、backend、实验 IO
   topics/    按课题拆分的研究目录
   apps/      可交互 demo，例如 Gradio
-  cli/       统一命令入口
 ```
 
 当前主要目录：
@@ -20,6 +19,7 @@ coverse/
 - `coverse/core/agents/`: 单 Agent 和多 Agent 编排。
 - `coverse/core/backends/`: OpenAI-compatible 模型后端。
 - `coverse/core/io/`: 实验结果、metadata、CSV/JSON 输出。
+- `coverse/topics/first_sentence_baseline/`: 第一启动句启发性基线实验，文档与代码同目录。
 - `coverse/topics/multi_chat/`: 多 Agent 对话生成课题。
 - `coverse/topics/prob_detect/`: 概率分析课题。
 - `coverse/apps/gradio_app.py`: 可交互聊天 demo。
@@ -36,14 +36,14 @@ uv sync
 pip install -e .
 ```
 
-## CLI 用法
+## 运行方式
 
-安装后统一使用 `coverse` 命令。
+直接运行对应脚本文件。
 
 ### 1. 多 Agent 批量生成
 
 ```bash
-coverse topic multi-chat \
+.venv/bin/python coverse/topics/multi_chat/runner.py \
   --prompts-path data/coverse_pe/story_prompt.txt \
   --agent-name agent_1 \
   --agent-name agent_2 \
@@ -66,10 +66,21 @@ LLM_MODEL=deepseek-chat
 - `results.json`: 完整 transcript
 - `results.csv`: 便于后处理的扁平化结果
 
-### 2. 概率分析
+### 2. 启动句启发性基线
 
 ```bash
-coverse topic prob-detect \
+.venv/bin/python coverse/topics/first_sentence_baseline/llm_sample.py \
+  --output-dir outputs
+```
+
+实验说明文档见 [coverse/topics/first_sentence_baseline/README.md](/Users/eric/projects/coverse/coverse/topics/first_sentence_baseline/README.md)。
+默认材料文件在 [prompt.json](/Users/eric/projects/coverse/data/first_sentence_baseline/prompt.json)。
+默认 embedding 模型路径是 `data/models/Qwen/Qwen3-Embedding-0.6B`。
+
+### 3. 概率分析
+
+```bash
+.venv/bin/python coverse/topics/prob_detect/runner.py \
   --model-path data/models/google-bert/bert-base-chinese \
   --target 嚼馒头 \
   --text "学习，就像[MASK][MASK][MASK]，因为久了方觉甜"
@@ -77,18 +88,14 @@ coverse topic prob-detect \
 
 也可以通过 `--text-file` 传入多条样本。
 
-### 3. 启动 Gradio demo
-
-```bash
-coverse app serve \
-  --output-dir outputs
-```
+### 4. 启动 Gradio demo
 
 ## 研究扩展约定
 
 - 新课题默认放在 `coverse/topics/<topic_name>/`。
+- 每个独立实验目录都应自带 `README.md`，把实验设计与运行方式和代码放在一起。
 - 共享层只沉淀至少被两个课题复用的能力。
-- 关键实验参数优先通过 CLI 传入，不依赖手改源码常量。
+- 关键实验参数优先通过脚本参数传入，不依赖手改源码常量。
 - 每次运行默认写出 metadata，保证实验留痕和复现。
 
 ## 测试
