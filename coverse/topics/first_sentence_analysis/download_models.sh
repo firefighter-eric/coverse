@@ -1,0 +1,1 @@
+hf download Qwen/Qwen3-Embedding-0.6B --local-dir models/Qwen/Qwen3-Embedding-0.6B

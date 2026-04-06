@@ -1,8 +1,11 @@
 /config
-/data
 /.venv
 /.idea
-/data
+/data/*
+
 
 *.egg-info
 .env
+.DS_Store
+__pycache__/
+.pytest_cache/
