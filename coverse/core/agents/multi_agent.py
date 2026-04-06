@@ -40,7 +40,5 @@ class MultiAgentRunner:
         for _ in range(n_turns):
             for agent in self.agents:
                 answer = agent.respond(self.build_agent_view(transcript, agent.config.name))
-                transcript.append(
-                    ConversationMessage(role=agent.config.name, content=answer)
-                )
+                transcript.append(ConversationMessage(role=agent.config.name, content=answer))
         return [message.to_dict() for message in transcript]

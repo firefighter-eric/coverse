@@ -10,22 +10,28 @@ from coverse.topics.prob_detect.scorer import ProbabilityScorer
 
 class SideEffectTests(unittest.TestCase):
     def test_probability_scorer_is_lazy(self):
-        with mock.patch(
-            "coverse.topics.prob_detect.scorer.AutoTokenizer.from_pretrained"
-        ) as tokenizer_loader, mock.patch(
-            "coverse.topics.prob_detect.scorer.AutoModelForMaskedLM.from_pretrained"
-        ) as model_loader:
+        with (
+            mock.patch(
+                "coverse.topics.prob_detect.scorer.AutoTokenizer.from_pretrained"
+            ) as tokenizer_loader,
+            mock.patch(
+                "coverse.topics.prob_detect.scorer.AutoModelForMaskedLM.from_pretrained"
+            ) as model_loader,
+        ):
             ProbabilityScorer(model_path="fake-model")
 
         tokenizer_loader.assert_not_called()
         model_loader.assert_not_called()
 
     def test_sentence_embedding_model_is_lazy(self):
-        with mock.patch(
-            "coverse.topics.first_sentence_analysis.embedding_similarity.AutoTokenizer.from_pretrained"
-        ) as tokenizer_loader, mock.patch(
-            "coverse.topics.first_sentence_analysis.embedding_similarity.AutoModel.from_pretrained"
-        ) as model_loader:
+        with (
+            mock.patch(
+                "coverse.topics.first_sentence_analysis.embedding_similarity.AutoTokenizer.from_pretrained"
+            ) as tokenizer_loader,
+            mock.patch(
+                "coverse.topics.first_sentence_analysis.embedding_similarity.AutoModel.from_pretrained"
+            ) as model_loader,
+        ):
             SentenceEmbeddingModel(model_path="fake-model")
 
         tokenizer_loader.assert_not_called()

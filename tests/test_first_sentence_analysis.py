@@ -34,7 +34,10 @@ class FakeGenerator:
         else:
             values = ["第三句回答", "第四句回答", "第五句回答"]
         value = values[(len(self.calls) - 1) % len(values)]
-        return {"raw": value + "。更多内容", "cleaned": clean_generated_sentence(value + "。更多内容")}
+        return {
+            "raw": value + "。更多内容",
+            "cleaned": clean_generated_sentence(value + "。更多内容"),
+        }
 
 
 class FakeEmbeddingModel:
@@ -79,7 +82,9 @@ class FirstSentenceAnalysisTests(unittest.TestCase):
         ]
         with tempfile.TemporaryDirectory() as tmp_dir:
             prompts_path = Path(tmp_dir) / "prompts.json"
-            prompts_path.write_text(json.dumps(prompts_payload, ensure_ascii=False), encoding="utf-8")
+            prompts_path.write_text(
+                json.dumps(prompts_payload, ensure_ascii=False), encoding="utf-8"
+            )
 
             with mock.patch(
                 "coverse.topics.first_sentence_analysis.llm_sample.NextSentenceGenerator",

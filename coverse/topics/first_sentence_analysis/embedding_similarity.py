@@ -162,9 +162,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="读取 llm 采样结果，计算 prompt 与回答的 embedding 相似度。"
     )
-    parser.add_argument("--samples-path", default="data/first_sentence_analysis/v0/llm_samples.json")
+    parser.add_argument(
+        "--samples-path", default="data/first_sentence_analysis/v0/llm_samples.json"
+    )
     parser.add_argument("--embedding-model-path", default=DEFAULT_EMBEDDING_MODEL_PATH)
-    parser.add_argument("--output-path", default="data/first_sentence_analysis/v0/embedding_similarities.json")
+    parser.add_argument(
+        "--output-path", default="data/first_sentence_analysis/v0/embedding_similarities.json"
+    )
     return parser
 
 

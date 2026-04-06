@@ -167,7 +167,9 @@ def build_parser() -> argparse.ArgumentParser:
         description="对每个启动句采样多个下一句，并输出 llm_samples.json。"
     )
     parser.add_argument("--prompts-file", default="data/first_sentence_analysis/v0/prompt.json")
-    parser.add_argument("--system-prompt-file", default="data/first_sentence_analysis/v0/system_prompt.md")
+    parser.add_argument(
+        "--system-prompt-file", default="data/first_sentence_analysis/v0/system_prompt.md"
+    )
     parser.add_argument("--output-path", default="data/first_sentence_analysis/v0/llm_samples.json")
     parser.add_argument("--samples-per-prompt", type=int, default=30)
     parser.add_argument("--temperature", type=float, default=1.0)
