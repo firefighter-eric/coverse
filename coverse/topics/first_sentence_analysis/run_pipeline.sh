@@ -9,7 +9,7 @@ source ".venv/bin/activate"
 SAMPLES_PER_PROMPT=30
 TEMPERATURE=1.0
 EMBEDDING_MODEL_PATH="data/models/Qwen/Qwen3-Embedding-0.6B"
-OUTPUT_DIR="data/first_sentence_analysis/v1"
+OUTPUT_DIR="data/first_sentence_analysis/v3"
 PROMPTS_FILE="${OUTPUT_DIR}/prompt.json"
 SYSTEM_PROMPT_FILE="${OUTPUT_DIR}/system_prompt.md"
 SAMPLES_PATH="${OUTPUT_DIR}/llm_samples.json"

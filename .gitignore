@@ -3,7 +3,9 @@
 /.idea
 /data/*
 
+
 *.egg-info
 .env
+.DS_Store
 __pycache__/
 .pytest_cache/

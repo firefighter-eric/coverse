@@ -19,7 +19,7 @@ from __future__ import annotations
 #
 # 主要输出：
 # - output_path 指定的 llm_samples.json: 每条 prompt 的原始回答和清洗后回答
-# - metadata.json: 与输出文件同目录，记录本次采样的参数与模型配置
+# - llm_sample_metadata.json: 与输出文件同目录，记录本次采样的参数与模型配置
 #
 # 直接运行示例：
 # python coverse/topics/first_sentence_analysis/llm_sample.py --output-path data/first_sentence_analysis/v1/llm_samples.json
@@ -79,7 +79,7 @@ def run_llm_sample(
 
     output_file = Path(output_path)
     output_file.parent.mkdir(parents=True, exist_ok=True)
-    metadata_path = output_file.parent / "metadata.json"
+    metadata_path = output_file.parent / "llm_sample_metadata.json"
 
     metadata = ExperimentMetadata(
         topic="first_sentence_analysis",

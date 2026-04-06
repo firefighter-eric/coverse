@@ -108,17 +108,17 @@ data/first_sentence_analysis/v0/prompt.json
 
 第一步 `llm-sample`：
 - `llm_samples.json`
-- `metadata.json`
+- `llm_sample_metadata.json`
 
 第二步 `embedding-similarity`：
 - `embedding_similarities.json`
 - `embedding_similarities.csv`
-- `metadata.json`
+- `embedding_similarity_metadata.json`
 
 第三步 `analyze`：
 - `analysis.json`
 - `analysis_ranking.csv`
-- `metadata.json`
+- `analysis_metadata.json`
 
 ## 结果解释
 

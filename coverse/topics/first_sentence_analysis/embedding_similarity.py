@@ -18,7 +18,7 @@ from __future__ import annotations
 # 主要输出：
 # - output_path 指定的 embedding_similarity.json
 # - 与输出文件同目录的 embedding_similarity.csv
-# - metadata.json
+# - embedding_similarity_metadata.json
 #
 # 直接运行示例：
 # python coverse/topics/first_sentence_analysis/embedding_similarity.py --samples-path xxx/llm_samples.json --output-path data/first_sentence_analysis/v1/embedding_similarity.json
@@ -100,7 +100,7 @@ def run_embedding_similarity(
     embedding_model = SentenceEmbeddingModel(embedding_model_path)
     output_file = Path(output_path)
     output_file.parent.mkdir(parents=True, exist_ok=True)
-    metadata_path = output_file.parent / "metadata.json"
+    metadata_path = output_file.parent / "embedding_similarity_metadata.json"
     csv_path = output_file.with_suffix(".csv")
 
     metadata = ExperimentMetadata(

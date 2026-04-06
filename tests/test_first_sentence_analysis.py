@@ -96,6 +96,7 @@ class FirstSentenceAnalysisTests(unittest.TestCase):
             metadata = json.loads(Path(result["metadata_path"]).read_text(encoding="utf-8"))
             samples = json.loads(Path(result["samples_path"]).read_text(encoding="utf-8"))
 
+            self.assertEqual(Path(result["metadata_path"]).name, "llm_sample_metadata.json")
             self.assertEqual(metadata["topic"], "first_sentence_analysis")
             self.assertEqual(metadata["args"]["stage"], "llm_sample")
             self.assertEqual(

@@ -17,7 +17,7 @@ from __future__ import annotations
 # 主要输出：
 # - output_path 指定的 analysis_details.json
 # - 与输出文件同目录的 analysis_ranking.csv
-# - metadata.json
+# - analysis_metadata.json
 #
 # 直接运行示例：
 # python coverse/topics/first_sentence_analysis/analysis.py --similarities-path xxx/embedding_similarity.json --output-path data/first_sentence_analysis/v1/analysis_details.json
@@ -80,7 +80,7 @@ def run_analysis(
 
     output_file = Path(output_path)
     output_file.parent.mkdir(parents=True, exist_ok=True)
-    metadata_path = output_file.parent / "metadata.json"
+    metadata_path = output_file.parent / "analysis_metadata.json"
     ranking_path = output_file.parent / "analysis_ranking.csv"
     metadata = ExperimentMetadata(
         topic="first_sentence_analysis",
