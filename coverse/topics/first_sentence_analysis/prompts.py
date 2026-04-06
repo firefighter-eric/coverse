@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 # 这个脚本负责管理第一启动句课题的材料文件入口：
-# 默认从 data/first_sentence_baseline/prompt.json 读取启动句。
+# 默认从 data/first_sentence_analysis/prompt.json 读取启动句。
 
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 
-DEFAULT_PROMPTS_PATH = Path("data/first_sentence_baseline/prompt.json")
+DEFAULT_PROMPTS_PATH = Path("data/first_sentence_analysis/prompt.json")
 
 
 @dataclass(frozen=True, slots=True)

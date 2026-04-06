@@ -1,5 +1,29 @@
 from __future__ import annotations
 
+# 这个脚本用于运行 masked LM 概率分析实验。
+# 作用：
+# 1. 读取目标短语和待分析文本。
+# 2. 调用 ProbabilityScorer 计算目标短语在上下文中的概率。
+# 3. 保存 JSON 和 CSV 结果，便于后续比较。
+#
+# 原理：
+# - 先把目标短语切成 tokenizer 级别的 token。
+# - 再逐 token 估计在给定 mask 上下文中的概率。
+# - 最后聚合成整体 prob 和 log_prob。
+#
+# 主要输入：
+# - model_path: 本地 masked LM 模型目录
+# - target: 要分析的目标短语
+# - text 或 text_file: 待分析文本
+#
+# 主要输出：
+# - results.json
+# - results.csv
+# - metadata.json
+#
+# 直接运行示例：
+# python coverse/topics/prob_detect/runner.py --model-path data/models/google-bert/bert-base-chinese --target 嚼馒头 --text "学习，就像[MASK][MASK][MASK]"
+
 import argparse
 import json
 import sys

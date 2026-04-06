@@ -1,7 +1,27 @@
 from __future__ import annotations
 
-# 这个脚本负责第二阶段 embedding 相似度计算：
-# 读取 LLM 采样结果，分别编码 prompt 和回答，并计算二者的余弦相似度与距离。
+# 这个脚本用于第一启动句基线课题的第二阶段 embedding 相似度计算。
+# 作用：
+# 1. 读取第一阶段生成的 llm_samples.json。
+# 2. 对完全重复的回答先去重。
+# 3. 分别编码“原始 prompt”和“回答”。
+# 4. 计算 prompt-response 之间的余弦相似度与余弦距离。
+#
+# 原理：
+# - 这里不比较“回答和回答之间”的距离，而是比较“prompt 和回答”的语义接近程度。
+# - 如果同一个 prompt 产生的回答对 prompt 的语义距离波动较大，后续分析里通常更容易体现发散性。
+#
+# 主要输入：
+# - samples_path: 第一阶段的 llm_samples.json
+# - embedding_model_path: 本地 embedding 模型目录
+#
+# 主要输出：
+# - output_path 指定的 embedding_similarity.json
+# - 与输出文件同目录的 embedding_similarity.csv
+# - metadata.json
+#
+# 直接运行示例：
+# python coverse/topics/first_sentence_analysis/embedding_similarity.py --samples-path xxx/llm_samples.json --output-path data/first_sentence_analysis/v1/embedding_similarity.json
 
 import argparse
 import json
@@ -17,9 +37,8 @@ import torch
 from transformers import AutoModel, AutoTokenizer
 
 from coverse.config import DEFAULT_EMBEDDING_MODEL_PATH
-from coverse.core.io import ExperimentIO
-from coverse.core.types import ExperimentMetadata, utc_timestamp
-from coverse.topics.first_sentence_baseline.common import (
+from coverse.core.types import ExperimentMetadata
+from coverse.topics.first_sentence_analysis.common import (
     dedupe_records,
     load_json_records,
 )
@@ -75,29 +94,33 @@ def run_embedding_similarity(
     *,
     samples_path: str,
     embedding_model_path: str,
-    output_dir: str,
-    command: str,
+    output_path: str,
 ) -> dict[str, str]:
     records = dedupe_records(load_json_records(samples_path))
     embedding_model = SentenceEmbeddingModel(embedding_model_path)
-    experiment_io = ExperimentIO(output_dir)
-    run_name = utc_timestamp().replace(":", "-")
-    run_dir = experiment_io.prepare_run_dir("first_sentence_baseline_embeddings", run_name)
+    output_file = Path(output_path)
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    metadata_path = output_file.parent / "metadata.json"
+    csv_path = output_file.with_suffix(".csv")
 
     metadata = ExperimentMetadata(
-        topic="first_sentence_baseline",
-        command=command,
+        topic="first_sentence_analysis",
+        command=f"python {Path(__file__).as_posix()}",
         args={
             "stage": "embedding_similarity",
             "samples_path": samples_path,
+            "output_path": str(output_file),
             "dedupe_policy": "exact_text_before_embedding",
             "similarity_definition": "cosine_similarity(prompt,response)",
         },
         model={"embedding_model_path": embedding_model_path},
-        output_dir=str(run_dir),
+        output_dir=str(output_file.parent),
         input_source=samples_path,
     )
-    experiment_io.write_metadata(run_dir, metadata)
+    metadata_path.write_text(
+        json.dumps(metadata.to_dict(), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
 
     texts = []
     for record in records:
@@ -117,12 +140,21 @@ def run_embedding_similarity(
             }
         )
 
-    similarities_path = experiment_io.write_json(run_dir, "embedding_similarity.json", rows)
-    experiment_io.write_csv(run_dir, "embedding_similarity.csv", rows)
+    output_file.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
+    if rows:
+        import csv
+
+        with csv_path.open("w", encoding="utf-8", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=list(rows[0].keys()))
+            writer.writeheader()
+            writer.writerows(rows)
+    else:
+        csv_path.write_text("", encoding="utf-8")
     return {
-        "run_dir": str(run_dir),
-        "metadata_path": str(Path(run_dir) / "metadata.json"),
-        "similarities_path": str(similarities_path),
+        "metadata_path": str(metadata_path),
+        "output_path": str(output_file),
+        "similarities_path": str(output_file),
+        "csv_path": str(csv_path),
     }
 
 
@@ -132,7 +164,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--samples-path", required=True)
     parser.add_argument("--embedding-model-path", default=DEFAULT_EMBEDDING_MODEL_PATH)
-    parser.add_argument("--output-dir", default="outputs")
+    parser.add_argument("--output-path", required=True)
     return parser
 
 
@@ -141,8 +173,7 @@ def main(argv: list[str] | None = None) -> int:
     result = run_embedding_similarity(
         samples_path=args.samples_path,
         embedding_model_path=args.embedding_model_path,
-        output_dir=args.output_dir,
-        command="python coverse/topics/first_sentence_baseline/embedding_similarity.py",
+        output_path=args.output_path,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0

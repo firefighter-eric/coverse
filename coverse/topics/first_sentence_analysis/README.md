@@ -1,4 +1,4 @@
-# 第一启动句启发性基线
+# 第一启动句分析
 
 ## 研究目的
 
@@ -7,13 +7,15 @@
 
 ## 实验材料
 
-实验默认从 `data/first_sentence_baseline/prompt.json` 读取 20 个启动句，整理自三个日常情境：
+实验默认从 `data/first_sentence_analysis/prompt.json` 读取 20 个启动句，整理自三个日常情境：
 
 - 公共空间与街道
 - 室内与办公场景
 - 居家与个人动作
 
 场景标签仅用于分析输出，不进入模型提示词。
+
+system prompt 默认从 `data/first_sentence_analysis/v0/system_prompt.md` 读取，因此这个课题的续写约束可以通过单独编辑 Markdown 文件调整，而不需要改 Python 代码。
 
 ## 流水线
 
@@ -50,40 +52,41 @@
 ## 运行方式
 
 ```bash
-.venv/bin/python coverse/topics/first_sentence_baseline/llm_sample.py \
-  --output-dir outputs
+.venv/bin/python coverse/topics/first_sentence_analysis/llm_sample.py \
+  --output-path data/first_sentence_analysis/v1/llm_samples.json
+```
+
+如果要替换 system prompt，可以在第一步额外传：
+
+```bash
+.venv/bin/python coverse/topics/first_sentence_analysis/llm_sample.py \
+  --system-prompt-file /path/to/system_prompt.md \
+  --output-path data/first_sentence_analysis/v1/llm_samples.json
 ```
 
 ```bash
-.venv/bin/python coverse/topics/first_sentence_baseline/embedding_similarity.py \
-  --samples-path outputs/first_sentence_baseline/<run>/llm_samples.json
+.venv/bin/python coverse/topics/first_sentence_analysis/embedding_similarity.py \
+  --samples-path data/first_sentence_analysis/v1/llm_samples.json \
+  --output-path data/first_sentence_analysis/v1/embedding_similarity.json
 ```
 
 ```bash
-.venv/bin/python coverse/topics/first_sentence_baseline/analysis.py \
-  --similarities-path outputs/first_sentence_baseline_embeddings/<run>/embedding_similarity.json
+.venv/bin/python coverse/topics/first_sentence_analysis/analysis.py \
+  --similarities-path data/first_sentence_analysis/v1/embedding_similarity.json \
+  --output-path data/first_sentence_analysis/v1/analysis_details.json
 ```
 
 如果只是本地调试，也可以直接运行串联脚本：
 
 ```bash
-bash coverse/topics/first_sentence_baseline/run_pipeline.sh
-```
-
-可通过环境变量覆盖默认值，例如：
-
-```bash
-OUTPUT_DIR=outputs_debug \
-SAMPLES_PER_PROMPT=5 \
-TEMPERATURE=1.0 \
-EMBEDDING_MODEL_PATH=data/models/Qwen/Qwen3-Embedding-0.6B \
-bash coverse/topics/first_sentence_baseline/run_pipeline.sh
+bash coverse/topics/first_sentence_analysis/run_pipeline.sh
 ```
 
 如果需要替换材料，可以在第一步传入 JSON 文件：
 
 ```bash
-.venv/bin/python coverse/topics/first_sentence_baseline/llm_sample.py \
+.venv/bin/python coverse/topics/first_sentence_analysis/llm_sample.py \
+  --output-path data/first_sentence_analysis/v1/llm_samples.json \
   --prompts-file /path/to/prompts.json
 ```
 
@@ -98,24 +101,24 @@ bash coverse/topics/first_sentence_baseline/run_pipeline.sh
 如果不传 `--prompts-file`，程序默认读取：
 
 ```text
-data/first_sentence_baseline/prompt.json
+data/first_sentence_analysis/prompt.json
 ```
 
 ## 输出文件
 
 第一步 `llm-sample`：
-- `metadata.json`
 - `llm_samples.json`
+- `metadata.json`
 
 第二步 `embedding-similarity`：
-- `metadata.json`
 - `embedding_similarity.json`
 - `embedding_similarity.csv`
+- `metadata.json`
 
 第三步 `analyze`：
-- `metadata.json`
-- `analysis_ranking.csv`
 - `analysis_details.json`
+- `analysis_ranking.csv`
+- `metadata.json`
 
 ## 结果解释
 

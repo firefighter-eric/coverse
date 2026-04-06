@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 # 这个脚本放第一启动句课题的公共能力：
-# 包括 prompt 加载、采样清洗、通用数据结构和 JSON 读写辅助函数。
+# 包括 prompt 加载、system prompt 加载、采样清洗、通用数据结构和 JSON 读写辅助函数。
 
 import json
 import re
@@ -17,13 +17,13 @@ from coverse.config import (
     DEFAULT_LLM_PROVIDER,
 )
 from coverse.core.backends import ModelBackendConfig, OpenAIChatBackend
-from coverse.topics.first_sentence_baseline.prompts import (
+from coverse.topics.first_sentence_analysis.prompts import (
     DEFAULT_PROMPTS_PATH,
     PromptSpec,
     load_prompt_specs_from_file,
 )
 
-GENERATION_SYSTEM_PROMPT = """
+DEFAULT_GENERATION_SYSTEM_PROMPT = """
 # 角色
 你是一名中文故事续写参与者。
 
@@ -62,6 +62,18 @@ def load_prompt_specs(prompts_file: str | None) -> list[PromptSpec]:
     return load_prompt_specs_from_file(resolve_prompts_file(prompts_file))
 
 
+def load_system_prompt(system_prompt_file: str | None = None) -> str:
+    if system_prompt_file is None:
+        return DEFAULT_GENERATION_SYSTEM_PROMPT
+
+    resolved = Path(system_prompt_file)
+    if resolved.exists():
+        prompt = resolved.read_text(encoding="utf-8").strip()
+        if prompt:
+            return prompt
+    return DEFAULT_GENERATION_SYSTEM_PROMPT
+
+
 def clean_generated_sentence(text: str) -> str:
     text = re.sub(r"<think>.+?</think>", "", text, flags=re.MULTILINE | re.DOTALL)
     text = text.strip()
@@ -83,6 +95,7 @@ class NextSentenceGenerator:
         temperature: float = 1.0,
         top_p: float = 1.0,
         max_tokens: int = 128,
+        system_prompt: str | None = None,
     ):
         self.backend = OpenAIChatBackend(
             ModelBackendConfig(
@@ -95,11 +108,12 @@ class NextSentenceGenerator:
         self.temperature = temperature
         self.top_p = top_p
         self.max_tokens = max_tokens
+        self.system_prompt = system_prompt or DEFAULT_GENERATION_SYSTEM_PROMPT
 
     def generate_one(self, prompt: str) -> dict[str, str]:
         raw = self.backend.generate(
             [
-                {"role": "system", "content": GENERATION_SYSTEM_PROMPT},
+                {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": prompt},
             ],
             temperature=self.temperature,

@@ -1,5 +1,29 @@
 from __future__ import annotations
 
+# 这个脚本用于批量运行多 Agent 故事续写实验。
+# 作用：
+# 1. 读取一组故事开头 prompt。
+# 2. 构造多个 Agent 按轮次接续发言。
+# 3. 保存完整 transcript 和扁平化结果文件。
+#
+# 原理：
+# - 每个 Agent 在自己的视角下接收历史消息。
+# - 多个 Agent 按固定顺序轮流续写，形成一段故事对话。
+# - 适合用于快速构造故事样本或比较不同模型/参数下的共创结果。
+#
+# 主要输入：
+# - prompts_path: 文本 prompt 文件
+# - agent_names: 参与对话的 Agent 名称
+# - n_turns: 轮数
+#
+# 主要输出：
+# - results.json: 完整 transcript
+# - results.csv: 扁平化结果
+# - metadata.json: 参数与模型配置
+#
+# 直接运行示例：
+# python coverse/topics/multi_chat/runner.py --prompts-path data/coverse_pe/story_prompt.txt
+
 import argparse
 import json
 import sys

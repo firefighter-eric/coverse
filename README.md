@@ -19,7 +19,7 @@ coverse/
 - `coverse/core/agents/`: 单 Agent 和多 Agent 编排。
 - `coverse/core/backends/`: OpenAI-compatible 模型后端。
 - `coverse/core/io/`: 实验结果、metadata、CSV/JSON 输出。
-- `coverse/topics/first_sentence_baseline/`: 第一启动句启发性基线实验，文档与代码同目录。
+- `coverse/topics/first_sentence_analysis/`: 第一启动句分析实验，文档与代码同目录。
 - `coverse/topics/multi_chat/`: 多 Agent 对话生成课题。
 - `coverse/topics/prob_detect/`: 概率分析课题。
 - `coverse/apps/gradio_app.py`: 可交互聊天 demo。
@@ -66,15 +66,15 @@ LLM_MODEL=deepseek-chat
 - `results.json`: 完整 transcript
 - `results.csv`: 便于后处理的扁平化结果
 
-### 2. 启动句启发性基线
+### 2. 第一启动句分析
 
 ```bash
-.venv/bin/python coverse/topics/first_sentence_baseline/llm_sample.py \
-  --output-dir outputs
+.venv/bin/python coverse/topics/first_sentence_analysis/llm_sample.py \
+  --output-path data/first_sentence_analysis/v1/llm_samples.json
 ```
 
-实验说明文档见 [coverse/topics/first_sentence_baseline/README.md](/Users/eric/projects/coverse/coverse/topics/first_sentence_baseline/README.md)。
-默认材料文件在 [prompt.json](/Users/eric/projects/coverse/data/first_sentence_baseline/prompt.json)。
+实验说明文档见 [coverse/topics/first_sentence_analysis/README.md](/Users/eric/projects/coverse/coverse/topics/first_sentence_analysis/README.md)。
+默认材料文件在 [prompt.json](/Users/eric/projects/coverse/data/first_sentence_analysis/prompt.json)。
 默认 embedding 模型路径是 `data/models/Qwen/Qwen3-Embedding-0.6B`。
 
 ### 3. 概率分析
